@@ -369,4 +369,111 @@ plot_tree(clf, filled=True, feature_names=data.feature_names, class_names=data.t
 plt.title('Decision Tree for Iris Dataset')
 plt.show()
 
+#####min-max
 
+player, opponent = 'x', 'o'
+
+# This function returns true if there are moves remaining on the board
+def isMovesLeft(board):
+    for i in range(3): 
+        for j in range(3):
+            if board[i][j] == '_':
+                return True
+    return False
+
+# Evaluation function
+def evaluate(b):
+    # Checking rows
+    for row in range(3):
+        if b[row][0] == b[row][1] == b[row][2]:
+            if b[row][0] == player:
+                return 10
+            elif b[row][0] == opponent:
+                return -10
+
+    # Checking columns
+    for col in range(3):
+        if b[0][col] == b[1][col] == b[2][col]:
+            if b[0][col] == player:
+                return 10
+            elif b[0][col] == opponent:
+                return -10
+
+    # Checking diagonals
+    if b[0][0] == b[1][1] == b[2][2]:
+        if b[0][0] == player:
+            return 10
+        elif b[0][0] == opponent:
+            return -10
+
+    if b[0][2] == b[1][1] == b[2][0]:
+        if b[0][2] == player:
+            return 10
+        elif b[0][2] == opponent:
+            return -10
+
+    # No winner
+    return 0
+
+# Minimax function
+def minimax(board, depth, isMax):
+    score = evaluate(board)
+
+    # If player or opponent has won
+    if score == 10:
+        return score
+    if score == -10:
+        return score
+
+    # If it's a tie
+    if not isMovesLeft(board):
+        return 0
+
+    if isMax:
+        best = -1000
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = player
+                    best = max(best, minimax(board, depth + 1, not isMax))
+                    board[i][j] = '_'
+        return best
+    else:
+        best = 1000
+        for i in range(3):
+            for j in range(3):
+                if board[i][j] == '_':
+                    board[i][j] = opponent
+                    best = min(best, minimax(board, depth + 1, not isMax))
+                    board[i][j] = '_'
+        return best
+
+# Function to find the best move for the player
+def findBestMove(board):
+    bestVal = -1000
+    bestMove = (-1, -1)
+
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == '_':
+                board[i][j] = player
+                moveVal = minimax(board, 0, False)
+                board[i][j] = '_'
+                if moveVal > bestVal:
+                    bestMove = (i, j)
+                    bestVal = moveVal
+
+    print("The value of the best Move is:", bestVal)
+    print()
+    return bestMove
+
+# Driver code
+board = [
+    ['x', 'o', 'x'],
+    ['o', 'o', 'x'],
+    ['_', '_', '_']
+]
+
+bestMove = findBestMove(board)
+print("The Optimal Move is:")
+print("ROW:", bestMove[0], "COL:", bestMove[1])
