@@ -113,3 +113,131 @@ int main() {
     printf("\n");
     return 0;
 }
+
+
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+
+int main() {
+    unsigned int a[3][3] = {
+        {6, 24, 1},
+        {13, 16, 10},
+        {20, 17, 15}
+    };
+
+    unsigned int b[3][3] = {
+        {8, 5, 10},
+        {21, 8, 21},
+        {21, 12, 8}
+    };
+
+    int i, j, t = 0;
+    unsigned int c[20], d[20];
+    char msg[20];
+
+    clrscr();
+
+    printf("Enter plain text: ");
+    scanf("%s", msg);
+
+    // Convert characters to numerical values (A=0, B=1, ..., Z=25)
+    for (i = 0; i < strlen(msg); i++) {
+        c[i] = msg[i] - 65;
+        printf("%d ", c[i]);
+    }
+
+    // Encryption: multiply with key matrix 'a' and mod 26
+    for (i = 0; i < 3; i++) {
+        t = 0;
+        for (j = 0; j < 3; j++) {
+            t += a[i][j] * c[j];
+        }
+        d[i] = t % 26;
+    }
+
+    printf("\nEncrypted Cipher Text: ");
+    for (i = 0; i < 3; i++) {
+        printf("%c ", d[i] + 65);
+    }
+
+    // Decryption: multiply with inverse matrix 'b' and mod 26
+    for (i = 0; i < 3; i++) {
+        t = 0;
+        for (j = 0; j < 3; j++) {
+            t += b[i][j] * d[j];
+        }
+        c[i] = t % 26;
+    }
+
+    printf("\nDecrypted Cipher Text: ");
+    for (i = 0; i < 3; i++) {
+        printf("%c ", c[i] + 65);
+    }
+
+    getch();
+    return 0;
+}
+
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+#include <conio.h>
+#include <ctype.h>
+
+int main() {
+    char plain[10], cipher[10];
+    int key, i, length;
+
+    clrscr();
+
+    printf("\nEnter the plain text: ");
+    scanf("%s", plain);
+
+    printf("\nEnter the key value: ");
+    scanf("%d", &key);
+
+    printf("\n\n\tPLAIN TEXT: %s", plain);
+    printf("\n\n\tENCRYPTED TEXT: ");
+
+    // Encryption process
+    for (i = 0, length = strlen(plain); i < length; i++) {
+        cipher[i] = plain[i] + key;
+
+        // Wrap around for uppercase letters
+        if (isupper(plain[i]) && (cipher[i] > 'Z'))
+            cipher[i] -= 26;
+
+        // Wrap around for lowercase letters
+        if (islower(plain[i]) && (cipher[i] > 'z'))
+            cipher[i] -= 26;
+
+        printf("%c", cipher[i]);
+    }
+
+    printf("\n\n\tAFTER DECRYPTION: ");
+
+    // Decryption process
+    for (i = 0; i < length; i++) {
+        plain[i] = cipher[i] - key;
+
+        // Wrap around for uppercase letters
+        if (isupper(cipher[i]) && (plain[i] < 'A'))
+            plain[i] += 26;
+
+        // Wrap around for lowercase letters
+        if (islower(cipher[i]) && (plain[i] < 'a'))
+            plain[i] += 26;
+
+        printf("%c", plain[i]);
+    }
+
+    getch();
+    return 0;
+}
